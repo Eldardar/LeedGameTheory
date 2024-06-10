@@ -42,6 +42,12 @@ C1 = 7360
 C2 = C1 * 1.042
 # Contractors Quantity in the neighborhood
 CONTRACTORS_AMOUNT = 10
+# Max apartments per constructor
+MAX_CONSTRUCTOR_APARTMENTS = 200
+# When half of the apartments are expensive, the constructor will build only
+# expensive apartments.
+# Otherwise, the constructor will build only cheap apartments. (%)
+CONSTRUCTOR_MOTIVATION_RATIO = 50 / 100
 # Operational profit for each contractor (%)
 OPERATIONAL_PROFIT = 20 / 100
 # Competitive factor that effects every additional contractor
@@ -60,6 +66,8 @@ TAX_PERCENTAGE = 3.5 / 100
 SUBSIDY_LEVELS = [0, 5000, 10000, 15000, 20000, 25000]
 # Subsidiary Influence on U2 parameter (%)
 SI = 10 / 100
+# Minimum Price Difference for Effect
+MIN_PRICE_DIFF = 1.5 / 100
 
 ########################
 # Education properties #

@@ -10,9 +10,7 @@ FIELDS = ["Iteration", "B Type", "Constructor", "Land Cost", "A type",
           "Merge_M2-Education", "Residual_M2-Education", "M1-Education",
           "S", "SI", "Price Difference", "Price Difference- After Subsidy",
           "Percent", "U2- Subsidy", "M2- Subsidy", "Quota_M2- Subsidy",
-          "Merge_M2- Subsidy", "Residual_M2- Subsidy", "M1 Subsidy",
-          "Total M2 Education", "Total M1 Education", "Total M2 Subsidy",
-          "Total M1 Subsidy"]
+          "Merge_M2- Subsidy", "Residual_M2- Subsidy", "M1 Subsidy"]
 
 def genereate_final_data_frame(land_cost_averages):
   final_data_frame = pd.DataFrame(columns=FIELDS)
@@ -35,7 +33,7 @@ def genereate_final_data_frame(land_cost_averages):
             net_operational_profit = OPERATIONAL_PROFIT - (constructor_index * COMPETITIVE_FACTOR)
             price_without_tax_1 = total_construction_cost_1 * (net_operational_profit + 1)
             price_with_tax_1 = (price_without_tax_1 - TAX_THRESHOLD) * TAX_PERCENTAGE + price_without_tax_1 \
-                if price_without_tax_1 > TAX_THRESHOLD else price_without_tax_1,
+              if price_without_tax_1 > TAX_THRESHOLD else price_without_tax_1
             price_without_tax_2 = total_construction_cost_2 * (net_operational_profit + 1)
             price_with_tax_2 = (price_without_tax_2 - TAX_THRESHOLD) * TAX_PERCENTAGE + price_without_tax_2 \
                 if price_without_tax_2 > TAX_THRESHOLD else price_without_tax_2
@@ -49,7 +47,7 @@ def genereate_final_data_frame(land_cost_averages):
             merge_m2_education = MAX_CONSTRUCTOR_APARTMENTS \
               if quota_m2_education / MAX_CONSTRUCTOR_APARTMENTS >= CONSTRUCTOR_MOTIVATION_RATIO \
               else 0
-            u3_education = 1 - u2_education - U1
+            u3_education = 1 - (u2_education / 100) - U1
             
             # Subsidy calculations
             si_value = SI if subsidy_level > 0 else 0
@@ -57,12 +55,11 @@ def genereate_final_data_frame(land_cost_averages):
             u2_subsidy = str(u2_education) + '%' \
                 if price_relative_diff >= MIN_PRICE_DIFF \
                 else u2_education + si_value * u3_education
-            m2_subsidy = u2_subsidy * M if constructor_index == 1 else last_residual_m2_subsidy
+            m2_subsidy = u2_education * M if constructor_index == 1 else last_residual_m2_subsidy
             quota_m2_subsidy = min(m2_subsidy, MAX_CONSTRUCTOR_APARTMENTS)
             merge_m2_subsidy = MAX_CONSTRUCTOR_APARTMENTS \
               if quota_m2_subsidy / MAX_CONSTRUCTOR_APARTMENTS >= CONSTRUCTOR_MOTIVATION_RATIO \
               else 0
-
 
             record = {
               "Iteration": iteration_number,
@@ -74,13 +71,13 @@ def genereate_final_data_frame(land_cost_averages):
               "CC1": total_construction_cost_1,
               "CC2": total_construction_cost_2,
               "Net OP": to_percentage_string(net_operational_profit),
-              "Q1": price_without_tax_1,
-              "Q2": price_without_tax_2,
-              "P1": price_with_tax_1,
-              "P2": price_with_tax_2,
+              "Q1": round(price_without_tax_1),
+              "Q2": round(price_without_tax_2),
+              "P1": round(price_with_tax_1),
+              "P2": round(price_with_tax_2),
               "E": education_investment_level,
               "EI": 0 if education_investment_level == 0 else EI,
-              "U2-Education": str(u2_education) + '%',
+              "U2-Education": to_percentage_string(u2_education / 100),
               "U3-Education": u3_education,
               "M2-Education": m2_education,
               "Quota_M2-Education": quota_m2_education,
@@ -108,7 +105,9 @@ def genereate_final_data_frame(land_cost_averages):
               # "Total M1 Subsidy": ,
             }
             
-            df = df.append(record, ignore_index=True)
+            # TODO: Create a list of records and then put it under a dataframe
+            new_record_data_frame = pd.DataFrame([record])
+            final_data_frame = pd.concat([final_data_frame, new_record_data_frame], ignore_index=True)
 
             # Data for next iteration
             last_residual_m2_education = 0 if merge_m2_education == 0 else (

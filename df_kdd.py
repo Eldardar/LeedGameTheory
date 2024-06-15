@@ -5,4 +5,4 @@ def calculate_region_average_apartment_price(df, region):
     for price in region_prices:
         total_prices += float(price.replace('₪', '').replace(',', ''))
 
-    return total_prices / len(region_prices)
+    return round(total_prices / len(region_prices))

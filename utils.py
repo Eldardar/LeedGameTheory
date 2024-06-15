@@ -1,2 +1,2 @@
 def to_percentage_string(number):
-  return round(str(number * 100) + '%', 2)
+  return str(round(number * 100, 3)) + '%'

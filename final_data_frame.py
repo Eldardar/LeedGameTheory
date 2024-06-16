@@ -79,7 +79,7 @@ def genereate_final_data_frame(land_cost_averages):
               "EI": 0 if education_investment_level == 0 else EI,
               "U2-Education": to_percentage_string(u2_education),
               "U3-Education": to_percentage_string(u3_education),
-              "M2-Education": to_percentage_string(m2_education),
+              "M2-Education": m2_education,
               "Quota_M2-Education": quota_m2_education,
               "Merge_M2-Education": merge_m2_education,
               "Residual_M2-Education": 0 if merge_m2_education == 0 else (

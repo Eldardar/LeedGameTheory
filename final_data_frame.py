@@ -41,21 +41,21 @@ def genereate_final_data_frame(land_cost_averages):
             # Education calculations
             u2_education = education_effects_data_frame.loc[
                   education_effects_data_frame['i'] == education_investment_level, 'U2(i)'
-                ].values[0]
-            m2_education = round((u2_education / 100) * M) if constructor_index == 1 else last_residual_m2_education
+                ].values[0] / 100
+            m2_education = round(u2_education * M) if constructor_index == 0 else last_residual_m2_education
             quota_m2_education = min(m2_education, MAX_CONSTRUCTOR_APARTMENTS)
             merge_m2_education = MAX_CONSTRUCTOR_APARTMENTS \
               if quota_m2_education / MAX_CONSTRUCTOR_APARTMENTS >= CONSTRUCTOR_MOTIVATION_RATIO \
               else 0
-            u3_education = 1 - (u2_education / 100) - U1
+            u3_education = 1 - u2_education - U1
             
             # Subsidy calculations
             si_value = SI if subsidy_level > 0 else 0
             price_relative_diff = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
-            u2_subsidy = str(u2_education) + '%' \
+            u2_subsidy = to_percentage_string(u2_education) \
                 if price_relative_diff >= MIN_PRICE_DIFF \
                 else u2_education + si_value * u3_education
-            m2_subsidy = round(u2_education * M) if constructor_index == 1 else last_residual_m2_subsidy
+            m2_subsidy = round(u2_education * M) if constructor_index == 0 else last_residual_m2_subsidy
             quota_m2_subsidy = min(m2_subsidy, MAX_CONSTRUCTOR_APARTMENTS)
             merge_m2_subsidy = MAX_CONSTRUCTOR_APARTMENTS \
               if quota_m2_subsidy / MAX_CONSTRUCTOR_APARTMENTS >= CONSTRUCTOR_MOTIVATION_RATIO \
@@ -77,9 +77,9 @@ def genereate_final_data_frame(land_cost_averages):
               "P2": round(price_with_tax_2),
               "E": education_investment_level,
               "EI": 0 if education_investment_level == 0 else EI,
-              "U2-Education": to_percentage_string(u2_education / 100),
+              "U2-Education": to_percentage_string(u2_education),
               "U3-Education": to_percentage_string(u3_education),
-              "M2-Education": m2_education,
+              "M2-Education": to_percentage_string(m2_education),
               "Quota_M2-Education": quota_m2_education,
               "Merge_M2-Education": merge_m2_education,
               "Residual_M2-Education": 0 if merge_m2_education == 0 else (
@@ -92,7 +92,6 @@ def genereate_final_data_frame(land_cost_averages):
               "Price Difference- After Subsidy": round(price_with_tax_2 - price_with_tax_1 - subsidy_level),
               "Percent": to_percentage_string(price_relative_diff),
               "U2- Subsidy": u2_subsidy,
-              # !!!!!!!
               "M2- Subsidy": m2_subsidy,
               "Quota_M2- Subsidy": quota_m2_subsidy,
               "Merge_M2- Subsidy": merge_m2_subsidy,

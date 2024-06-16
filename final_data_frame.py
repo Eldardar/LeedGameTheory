@@ -52,7 +52,7 @@ def genereate_final_data_frame(land_cost_averages):
             # Subsidy calculations
             si_value = SI if subsidy_level > 0 else 0
             price_relative_diff = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
-            u2_subsidy = to_percentage_string(u2_education) \
+            u2_subsidy = u2_education \
                 if price_relative_diff >= MIN_PRICE_DIFF \
                 else u2_education + si_value * u3_education
             m2_subsidy = round(u2_education * M) if constructor_index == 0 else last_residual_m2_subsidy

@@ -91,7 +91,7 @@ def genereate_final_data_frame(land_cost_averages):
               "Price Difference": round(price_with_tax_2 - price_with_tax_1),
               "Price Difference- After Subsidy": round(price_with_tax_2 - price_with_tax_1 - subsidy_level),
               "Percent": to_percentage_string(price_relative_diff),
-              "U2- Subsidy": u2_subsidy,
+              "U2- Subsidy": to_percentage_string(u2_subsidy),
               "M2- Subsidy": m2_subsidy,
               "Quota_M2- Subsidy": quota_m2_subsidy,
               "Merge_M2- Subsidy": merge_m2_subsidy,

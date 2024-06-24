@@ -14,9 +14,10 @@ def main():
         land_cost_averages[area] = calculate_region_average_apartment_price(
             input_data_frame, area)
 
-    final_data_frame = genereate_final_data_frame(land_cost_averages)
-    final_data_frame
-    final_data_frame.to_csv('output.csv')
+    print(land_cost_averages)
+    # final_data_frame = genereate_final_data_frame(land_cost_averages)
+    # final_data_frame
+    # final_data_frame.to_csv('output.csv')
 
 
 if __name__ == "__main__":

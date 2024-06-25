@@ -37,9 +37,9 @@ M2_BASE = 50
 # Construction properties #
 ###########################
 # Standard construction cost per SQM (NIS)
-C1 = 7360
+C1 = 5602
 # Green construction cost per SQM (NIS)
-C2 = C1 * 1.042
+C2 = C1 * 1.07
 # Contractors Quantity in the neighborhood
 CONTRACTORS_AMOUNT = 10
 # Max apartments per constructor
@@ -49,7 +49,7 @@ MAX_CONSTRUCTOR_APARTMENTS = 200
 # Otherwise, the constructor will build only cheap apartments. (%)
 CONSTRUCTOR_MOTIVATION_RATIO = 50 / 100
 # Operational profit for each contractor (%)
-OPERATIONAL_PROFIT = 20 / 100
+OPERATIONAL_PROFIT = 15 / 100
 # Competitive factor that effects every additional contractor
 # that start to promote apartments in the tested neighborhood (%)
 COMPETITIVE_FACTOR = 0.5 / 100

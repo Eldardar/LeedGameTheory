@@ -1,16 +1,17 @@
 import pandas as pd
 
-from constants import APARTMENT_TYPES, APARTMENTS_SIZE, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, EDUCATION_INVESTMENT_LEVELS, EI, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
+from constants import APARTMENT_TYPES, APARTMENTS_SIZE, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
 from utils import to_percentage_string
 
 FIELDS = ["Iteration", "B Type", "Constructor", "Land Cost", "A type",
           "A Size- Sq.Meters", "CC1", "CC2", "Net OP", "Q1", "Q2", "P1",
-          "P2", "E", "EI", "U2-Education",
-          "U3-Education", "M2-Education", "Quota_M2-Education",
+          "P2", "Primary Action", "Subsidy Cost", "Education Cost", "E",
+          "EI", "U2-Education", "U3-Education", "M2-Education", "Quota_M2-Education",
           "Merge_M2-Education", "Residual_M2-Education", "M1-Education",
           "S", "SI", "Price Difference", "Price Difference- After Subsidy",
           "Percent", "U2- Subsidy", "M2- Subsidy", "Quota_M2- Subsidy",
-          "Merge_M2- Subsidy", "Residual_M2- Subsidy", "M1 Subsidy"]
+          "Merge_M2- Subsidy", "Residual_M2- Subsidy", "M1 Subsidy",
+          "Constructor Profit"]
 
 def genereate_final_data_frame(land_cost_averages):
   final_data_frame = pd.DataFrame(columns=FIELDS)
@@ -20,8 +21,21 @@ def genereate_final_data_frame(land_cost_averages):
 
   education_effects_data_frame = pd.read_csv(r'Education effects.csv')
 
-  for subsidy_level in SUBSIDY_LEVELS:
-    for education_investment_level in EDUCATION_INVESTMENT_LEVELS:
+  for primary_action in list(GOVERNMENT_ACTIONS.keys()):
+    for action_level_index in range(GOVERNMENT_ACTIONS[primary_action]):
+    # for subsidy_level in SUBSIDY_LEVELS:
+    # for education_investment_level in EDUCATION_INVESTMENT_LEVELS:
+      if primary_action == "Subsidy":
+        subsidy_level = SUBSIDY_LEVELS[action_level_index]
+        subsidy_cost = subsidy_level * M
+        education_cost = max(0, E - subsidy_cost)
+        education_investment_level = education_cost // EDUCATION_LEVEL_COST
+      elif primary_action == "Education":
+        education_investment_level = action_level_index
+        education_cost = education_investment_level * EDUCATION_LEVEL_COST
+        subsidy_cost = E - education_cost
+        subsidy_level = subsidy_cost // M
+
       for apartment_type in APARTMENT_TYPES:
         for area in DEMAND_AREAS:
           iteration_number += 1
@@ -75,6 +89,9 @@ def genereate_final_data_frame(land_cost_averages):
               "Q2": round(price_without_tax_2),
               "P1": round(price_with_tax_1),
               "P2": round(price_with_tax_2),
+              "Primary Action": primary_action,
+              "Subsidy Cost": subsidy_cost,
+              "Education Cost": education_cost,
               "E": education_investment_level,
               "EI": 0 if education_investment_level == 0 else EI,
               "U2-Education": to_percentage_string(u2_education),
@@ -103,6 +120,7 @@ def genereate_final_data_frame(land_cost_averages):
               # "Total M1 Education": ,
               # "Total M2 Subsidy": ,
               # "Total M1 Subsidy": ,
+              "Constructor Profit": 0,
             }
             
             # TODO: Create a list of records and then put it under a dataframe

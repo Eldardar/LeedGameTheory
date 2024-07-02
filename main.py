@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 
 from constants import DEMAND_AREAS
 from df_kdd import calculate_region_average_apartment_price
@@ -16,7 +17,7 @@ def main():
 
     final_data_frame = genereate_final_data_frame(land_cost_averages)
     final_data_frame
-    final_data_frame.to_csv('output.csv')
+    final_data_frame.to_csv(f'output-{str(datetime.datetime.now())}.csv')
 
 
 if __name__ == "__main__":

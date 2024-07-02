@@ -72,10 +72,19 @@ MIN_PRICE_DIFF = 1.5 / 100
 ########################
 # Education properties #
 ########################
-# Total government investment in marketing & education for green
-# construction (NIS)
-E = 3_000_000
+EDUCATION_LEVEL_COST = 1_000_000
 # Goverment's investment in education (millions NIS)
-EDUCATION_INVESTMENT_LEVELS = list(range(16))
+EDUCATION_LEVELS_COUNT = 16
 # Education impact factor (%)
 EI = 0.005 / 100
+
+######################
+# General properties #
+######################
+# Total government investment in marketing & education for green
+# construction (NIS)
+E = 15_000_000
+GOVERNMENT_ACTIONS = {
+  "Subsidy": len(SUBSIDY_LEVELS),
+  "Education": EDUCATION_LEVELS_COUNT,
+}

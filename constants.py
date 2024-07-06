@@ -42,7 +42,7 @@ C1 = 5602
 C2 = C1 * 1.07
 # Contractors Quantity in the neighborhood
 CONTRACTORS_AMOUNT = 10
-# Max apartments per constructor
+# Max apartments per constructor (marked as W)
 MAX_CONSTRUCTOR_APARTMENTS = 200
 # When half of the apartments are expensive, the constructor will build only
 # expensive apartments.

@@ -28,7 +28,6 @@ FIELDS = ["Iteration",
           "Quota_M2-Education",
           "Merge_M2-Education",
           "Residual_M2-Education",
-          "M1-Education",
           "S",
           "Price Difference",
           "Price Difference- After Subsidy",
@@ -145,7 +144,6 @@ def genereate_final_data_frame(land_cost_averages):
               "Residual_M2-Education": 0 if merge_m2_education == 0 else (
                 max(m2_education - merge_m2_education, 0)
               ),
-              "M1-Education": MAX_CONSTRUCTOR_APARTMENTS - merge_m2_education,
               "S": subsidy_level,
               "Price Difference": round(price_with_tax_2 - price_with_tax_1),
               "Price Difference- After Subsidy": round(price_with_tax_2 - price_with_tax_1 - subsidy_level),

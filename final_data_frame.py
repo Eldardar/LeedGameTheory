@@ -1,7 +1,7 @@
 import pandas as pd
 import math
 
-from constants import APARTMENT_TYPES, APARTMENTS_SIZE, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
+from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
 from utils import to_percentage_string
 
 FIELDS = ["Iteration",
@@ -42,13 +42,13 @@ FIELDS = ["Iteration",
           "H2",
           "Constructor Profit"]
 
+# TODO1: Solve number of rooms problem 
+# TODO2: Make the constructor build the scenario which makes him the highest profit
 def genereate_final_data_frame(land_cost_averages):
   final_data_frame = pd.DataFrame(columns=FIELDS)
   iteration_number = 0
   last_residual_m2_education = 0
   last_residual_m2_subsidy = 0
-
-  education_effects_data_frame = pd.read_csv(r'Education effects.csv')
 
   for primary_action in list(GOVERNMENT_ACTIONS.keys()):
     for action_level_index in range(GOVERNMENT_ACTIONS[primary_action]):
@@ -68,13 +68,13 @@ def genereate_final_data_frame(land_cost_averages):
         subsidy_level = subsidy_cost // M
 
       # TODO: It's more realistic to have multiple room apartments per constructor
-      for apartment_type in APARTMENT_TYPES:
+      for apartment_type in APARTMENTS_DETAILS.keys():
         for area in DEMAND_AREAS:
           iteration_number += 1
           for constructor_index in range(CONTRACTORS_AMOUNT):
             # Cost calculations
             land_cost = land_cost_averages[area]
-            apartment_size = APARTMENTS_SIZE[apartment_type]
+            apartment_size = APARTMENTS_DETAILS[apartment_type]["size"]
             total_construction_cost_1 = apartment_size * C1 + land_cost
             total_construction_cost_2 = apartment_size * C2 + land_cost
             net_operational_profit = OPERATIONAL_PROFIT - (constructor_index * COMPETITIVE_FACTOR)

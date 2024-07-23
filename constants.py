@@ -13,22 +13,25 @@ U3 = 1 - (U1 + U2)
 #########################
 # Apartments properties #
 #########################
-APARTMENT_TYPES = ["A3", "A4", "A5", "A6"]
-# Total Apartments Quantity in the neighborhood
 M = 2000
-# Apartments quantity (% of total apartments)
-APARTMENTS_COUNT = {
-    "A3": M * 15 / 100,
-    "A4": M * 40 / 100,
-    "A5": M * 35 / 100,
-    "A6": M * 10 / 100,
-}
-# Apartments total size (sqm)
-APARTMENTS_SIZE = {
-    "A3": 88,
-    "A4": 118,
-    "A5": 147,
-    "A6": 176,
+# Apartments details (distribution and size [sqm])
+APARTMENTS_DETAILS = {
+    "A3": {
+      "distribution": M * 25 / 100,
+      "size": 88,
+    },
+    "A4": {
+      "distribution": M * 40 / 100,
+      "size": 118,
+    },
+    "A5": {
+      "distribution": M * 25 / 100,
+      "size": 147,
+    },
+    "A6": {
+      "distribution": M * 10 / 100,
+      "size": 176,
+    },
 }
 # Base demand for "green" building
 M2_BASE = 50

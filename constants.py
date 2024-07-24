@@ -13,23 +13,26 @@ U3 = 1 - (U1 + U2)
 #########################
 # Apartments properties #
 #########################
+# Total apartments in the neighborhood
 M = 2000
+# Max apartments per constructor (marked as W)
+MAX_CONSTRUCTOR_APARTMENTS = 200
 # Apartments details (distribution and size [sqm])
 APARTMENTS_DETAILS = {
     "A3": {
-      "distribution": M * 25 / 100,
+      "amount_per_constructor": MAX_CONSTRUCTOR_APARTMENTS * 25 / 100,
       "size": 88,
     },
     "A4": {
-      "distribution": M * 40 / 100,
+      "amount_per_constructor": MAX_CONSTRUCTOR_APARTMENTS * 40 / 100,
       "size": 118,
     },
     "A5": {
-      "distribution": M * 25 / 100,
+      "amount_per_constructor": MAX_CONSTRUCTOR_APARTMENTS * 25 / 100,
       "size": 147,
     },
     "A6": {
-      "distribution": M * 10 / 100,
+      "amount_per_constructor": MAX_CONSTRUCTOR_APARTMENTS * 10 / 100,
       "size": 176,
     },
 }
@@ -45,8 +48,6 @@ C1 = 5602
 C2 = C1 * 1.07
 # Contractors Quantity in the neighborhood
 CONTRACTORS_AMOUNT = 10
-# Max apartments per constructor (marked as W)
-MAX_CONSTRUCTOR_APARTMENTS = 200
 # When half of the apartments are expensive, the constructor will build only
 # expensive apartments.
 # Otherwise, the constructor will build only cheap apartments. (%)

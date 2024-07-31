@@ -61,8 +61,7 @@ def genereate_final_data_frame(land_cost_averages):
   last_residual_m2_subsidy = 0
 
   for primary_action in list(GOVERNMENT_ACTIONS.keys()):
-    for action_level_index in range(1):
-    # for action_level_index in range(GOVERNMENT_ACTIONS[primary_action]):
+    for action_level_index in range(GOVERNMENT_ACTIONS[primary_action]):
       if primary_action == "Subsidy":
         subsidy_level = SUBSIDY_LEVELS[action_level_index]
         # TODO: Einav is right - can be more complicated
@@ -83,8 +82,7 @@ def genereate_final_data_frame(land_cost_averages):
       u2_after_education = U2 + education_affect
       u3_post_education = 1 - u2_after_education - U1
 
-      for area in [DEMAND_AREAS[0]]:
-      # for area in DEMAND_AREAS:
+      for area in DEMAND_AREAS:
         iteration_number += 1
         type_2_total_constructed = 0
         apartments_type2_totals = {}

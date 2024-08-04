@@ -178,6 +178,8 @@ def genereate_final_data_frame(land_cost_averages):
               total_constructor_profit += apartment_type_h1
 
             # total_summary[apartment_type] = summary
+            apartments_type2_totals[apartment_type]["P1"] = round(price_with_tax_1)
+            apartments_type2_totals[apartment_type]["P2"] = round(price_with_tax_2)
           
           m2_after_subsidy = round(u2_after_subsidy * M) if constructor_index == 0 else last_residual_m2_subsidy
           quota_m2_subsidy = min(m2_after_subsidy, MAX_CONSTRUCTOR_APARTMENTS)
@@ -198,14 +200,14 @@ def genereate_final_data_frame(land_cost_averages):
             # "Q2": round(price_without_tax_2),
             # "P1": round(price_with_tax_1),
             # "P2": round(price_with_tax_2),
-            "A3 P1": 0,
-            "A3 P2": 0,
-            "A4 P1": 0,
-            "A4 P2": 0,
-            "A5 P1": 0,
-            "A5 P2": 0,
-            "A6 P1": 0,
-            "A6 P2": 0,
+            "A3 P1": apartments_type2_totals["A3"]["P1"],
+            "A3 P2": apartments_type2_totals["A3"]["P2"],
+            "A4 P1": apartments_type2_totals["A4"]["P1"],
+            "A4 P2": apartments_type2_totals["A4"]["P2"],
+            "A5 P1": apartments_type2_totals["A5"]["P1"],
+            "A5 P2": apartments_type2_totals["A5"]["P2"],
+            "A6 P1": apartments_type2_totals["A6"]["P1"],
+            "A6 P2": apartments_type2_totals["A6"]["P2"],
             "Primary Action": primary_action,
             "Subsidy Cost": subsidy_cost,
             "Education Cost": education_cost,

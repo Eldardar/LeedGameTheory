@@ -1,7 +1,7 @@
 import pandas as pd
 import math
 
-from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
+from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT_1, PROFIT_EXTRA_CHARGE_2, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
 from utils import to_percentage_string
 
 FIELDS = ["Iteration",
@@ -10,11 +10,20 @@ FIELDS = ["Iteration",
           "Land Cost",
           "CC1",
           "CC2",
-          "Net OP",
-          "Q1",
-          "Q2",
-          "P1",
-          "P2",
+          "Net OP 1",
+          # "Net OP 2",
+          # "Q1",
+          # "Q2",
+          # "P1",
+          # "P2",
+          "A3 P1",
+          "A3 P2",
+          "A4 P1",
+          "A4 P2",
+          "A5 P1",
+          "A5 P2",
+          "A6 P1",
+          "A6 P2",
           "Primary Action",
           "Subsidy Cost",
           "Education Cost",
@@ -92,7 +101,8 @@ def genereate_final_data_frame(land_cost_averages):
 
           # Cost calculations
           land_cost = land_cost_averages[area]
-          net_operational_profit = OPERATIONAL_PROFIT - (constructor_index * COMPETITIVE_FACTOR)
+          net_operational_profit_1 = OPERATIONAL_PROFIT_1 - (constructor_index * COMPETITIVE_FACTOR)
+          # net_operational_profit_2 = OPERATIONAL_PROFIT_2 - (constructor_index * COMPETITIVE_FACTOR)
 
           total_construction_cost_1 = 0
           total_construction_cost_2 = 0
@@ -110,10 +120,11 @@ def genereate_final_data_frame(land_cost_averages):
             total_construction_cost_1 += aparment_cost_1 * amount
             total_construction_cost_2 += aparment_cost_2 * amount
 
-            price_without_tax_1 = aparment_cost_1 * (net_operational_profit + 1)
+            price_without_tax_1 = aparment_cost_1 * (net_operational_profit_1 + 1)
             price_with_tax_1 = (price_without_tax_1 - TAX_THRESHOLD) * TAX_PERCENTAGE + price_without_tax_1 \
               if price_without_tax_1 > TAX_THRESHOLD else price_without_tax_1
-            price_without_tax_2 = aparment_cost_2 * (net_operational_profit + 1)
+            # price_without_tax_2 = aparment_cost_2 * (net_operational_profit_2 + 1)
+            price_without_tax_2 = price_with_tax_1 * PROFIT_EXTRA_CHARGE_2
             price_with_tax_2 = (price_without_tax_2 - TAX_THRESHOLD) * TAX_PERCENTAGE + price_without_tax_2 \
                 if price_without_tax_2 > TAX_THRESHOLD else price_without_tax_2
 
@@ -181,11 +192,20 @@ def genereate_final_data_frame(land_cost_averages):
             "Land Cost": land_cost,
             "CC1": round(total_construction_cost_1),
             "CC2": round(total_construction_cost_2),
-            "Net OP": to_percentage_string(net_operational_profit),
-            "Q1": round(price_without_tax_1),
-            "Q2": round(price_without_tax_2),
-            "P1": round(price_with_tax_1),
-            "P2": round(price_with_tax_2),
+            "Net OP 1": to_percentage_string(net_operational_profit_1),
+            # "Net OP 2": to_percentage_string(net_operational_profit_2),
+            # "Q1": round(price_without_tax_1),
+            # "Q2": round(price_without_tax_2),
+            # "P1": round(price_with_tax_1),
+            # "P2": round(price_with_tax_2),
+            "A3 P1": 0,
+            "A3 P2": 0,
+            "A4 P1": 0,
+            "A4 P2": 0,
+            "A5 P1": 0,
+            "A5 P2": 0,
+            "A6 P1": 0,
+            "A6 P2": 0,
             "Primary Action": primary_action,
             "Subsidy Cost": subsidy_cost,
             "Education Cost": education_cost,

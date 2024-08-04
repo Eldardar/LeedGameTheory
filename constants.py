@@ -53,7 +53,9 @@ CONTRACTORS_AMOUNT = 10
 # Otherwise, the constructor will build only cheap apartments. (%)
 CONSTRUCTOR_MOTIVATION_RATIO = 50 / 100
 # Operational profit for each contractor (%)
-OPERATIONAL_PROFIT = 15 / 100
+OPERATIONAL_PROFIT_1 = 15 / 100
+# OPERATIONAL_PROFIT_2 = 14 / 100
+PROFIT_EXTRA_CHARGE_2 = 106 / 100
 # Competitive factor that effects every additional contractor
 # that start to promote apartments in the tested neighborhood (%)
 COMPETITIVE_FACTOR = 0.5 / 100

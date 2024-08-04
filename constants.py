@@ -58,7 +58,7 @@ OPERATIONAL_PROFIT_1 = 15 / 100
 PROFIT_EXTRA_CHARGE_2 = 106 / 100
 # Competitive factor that effects every additional contractor
 # that start to promote apartments in the tested neighborhood (%)
-COMPETITIVE_FACTOR = 0.5 / 100
+COMPETITIVE_FACTOR = 0.25 / 100
 
 ##################
 # TAX properties #

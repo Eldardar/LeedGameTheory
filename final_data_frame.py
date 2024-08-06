@@ -31,10 +31,11 @@ FIELDS = ["Iteration",
           "EI",
           "U2-After-Education",
           "U3-After-Education",
-          "S",
-          "Price Difference",
-          "Price Difference- After Subsidy",
-          "P2-Subsidized-Relative-Percent",
+          "Subsidy Level",
+          "Subsidy Left",
+          # "Price Difference",
+          # "Price Difference- After Subsidy",
+          # "P2-Subsidized-Relative-Percent",
           # "U2-After-Subsidy",
           # "M2-After-Subsidy",
           # "Quota_M2- Subsidy",
@@ -74,7 +75,7 @@ def genereate_final_data_frame(land_cost_averages):
       if primary_action == "Subsidy":
         subsidy_level = SUBSIDY_LEVELS[action_level_index]
         # TODO: Einav is right - can be more complicated
-        subsidy_cost = subsidy_level * M
+        subsidy_cost = min(subsidy_level * M, E)
         # remainder_cost
         education_cost = max(0, E - subsidy_cost)
         education_investment_level = education_cost // EDUCATION_LEVEL_COST
@@ -84,7 +85,7 @@ def genereate_final_data_frame(land_cost_averages):
         # remainder_cost
         subsidy_cost = max(0, E - education_cost)
         # TODO: Einav is right - type 1 apartments can get susbsidy
-        subsidy_level = subsidy_cost // M
+        # subsidy_level = subsidy_cost // M
 
       # Education calculations
       education_affect = 0.25 / (1 + (math.e ** (-0.5 * (education_investment_level - 7.5))))
@@ -92,7 +93,9 @@ def genereate_final_data_frame(land_cost_averages):
       u3_post_education = 1 - u2_after_education - U1
 
       for area in DEMAND_AREAS:
+      # for area in [DEMAND_AREAS[0]]:
         iteration_number += 1
+        subsidy_left = subsidy_cost
         type_2_total_constructed = 0
         apartments_type2_totals = {}
 
@@ -139,12 +142,14 @@ def genereate_final_data_frame(land_cost_averages):
             # summary["apartment_2_profit"] = apartment_2_profit
 
             # Subsidy calculations
-            subsidized_price_relative_diff_2 = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
+            # subsidized_price_relative_diff_2 = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
+            subsidized_price_relative_diff_2 = subsidy_level / (price_with_tax_2 - price_with_tax_1)
             # If the subsidy effect is not significant, the part of "green" demand will be set by the education effects.
             # Otherwise, we'll add to the demand the affected part.
-            if subsidized_price_relative_diff_2 < MIN_PRICE_DIFF:
+            if subsidized_price_relative_diff_2 >= MIN_PRICE_DIFF and subsidy_left > 0:
               u2_after_subsidy += SI * u3_post_education * (amount / MAX_CONSTRUCTOR_APARTMENTS)
               area_type_2_apartments_demand_percentage = u2_after_education + SI * u3_post_education * (amount / MAX_CONSTRUCTOR_APARTMENTS)
+              
             else:
               area_type_2_apartments_demand_percentage = u2_after_education
               
@@ -174,6 +179,7 @@ def genereate_final_data_frame(land_cost_averages):
               total_constructor_profit += apartment_type_h2
               type_2_total_constructed += type_2_constructor_offer_amount
               apartments_type2_totals[apartment_type]["constructed"] += type_2_constructor_offer_amount
+              subsidy_left -= type_2_constructor_offer_amount * subsidy_level
             else:
               total_constructor_profit += apartment_type_h1
 
@@ -215,10 +221,11 @@ def genereate_final_data_frame(land_cost_averages):
             "EI": 0 if education_investment_level == 0 else EI,
             "U2-After-Education": to_percentage_string(u2_after_education),
             "U3-After-Education": to_percentage_string(u3_post_education),
-            "S": subsidy_level,
-            "Price Difference": round(price_with_tax_2 - price_with_tax_1),
-            "Price Difference- After Subsidy": round(price_with_tax_2 - price_with_tax_1 - subsidy_level),
-            "P2-Subsidized-Relative-Percent": to_percentage_string(subsidized_price_relative_diff_2),
+            "Subsidy Level": subsidy_level,
+            "Subsidy Left": subsidy_left,
+            # "Price Difference": round(price_with_tax_2 - price_with_tax_1),
+            # "Price Difference- After Subsidy": round(price_with_tax_2 - price_with_tax_1 - subsidy_level),
+            # "P2-Subsidized-Relative-Percent": to_percentage_string(subsidized_price_relative_diff_2),
             # "U2-After-Subsidy": to_percentage_string(u2_after_subsidy),
             # "M2-After-Subsidy": m2_after_subsidy,
             # "Quota_M2- Subsidy": quota_m2_subsidy,

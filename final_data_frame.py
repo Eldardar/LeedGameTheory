@@ -142,11 +142,10 @@ def genereate_final_data_frame(land_cost_averages):
             # summary["apartment_2_profit"] = apartment_2_profit
 
             # Subsidy calculations
-            # subsidized_price_relative_diff_2 = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
-            subsidized_price_relative_diff_2 = subsidy_level / (price_with_tax_2 - price_with_tax_1)
+            subsidized_price_relative_diff_2 = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
             # If the subsidy effect is not significant, the part of "green" demand will be set by the education effects.
             # Otherwise, we'll add to the demand the affected part.
-            if subsidized_price_relative_diff_2 >= MIN_PRICE_DIFF and subsidy_left > 0:
+            if subsidized_price_relative_diff_2 <= MIN_PRICE_DIFF and subsidy_left > 0:
               u2_after_subsidy += SI * u3_post_education * (amount / MAX_CONSTRUCTOR_APARTMENTS)
               area_type_2_apartments_demand_percentage = u2_after_education + SI * u3_post_education * (amount / MAX_CONSTRUCTOR_APARTMENTS)
               

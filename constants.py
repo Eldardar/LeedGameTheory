@@ -69,7 +69,7 @@ TAX_PERCENTAGE = 3.5 / 100
 ######################
 # Subsidy properties #
 ######################
-SUBSIDY_LEVELS = [0, 5000, 10000, 15000, 20000, 25000]
+SUBSIDY_LEVELS = [0, 50_000, 100_000, 150_000, 200_000]
 # Subsidiary Influence on U2 parameter (%)
 SI = 10 / 100
 # Minimum Price Difference for Effect

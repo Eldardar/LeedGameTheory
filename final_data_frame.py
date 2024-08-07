@@ -88,7 +88,7 @@ def genereate_final_data_frame(land_cost_averages):
         # subsidy_level = subsidy_cost // M
 
       # Education calculations
-      education_affect = 0.25 / (1 + (math.e ** (-0.5 * (education_investment_level - 7.5))))
+      education_affect = 0.15 / (1 + (math.e ** (-0.5 * (education_investment_level - 7.5))))
       u2_after_education = U2 + education_affect
       u3_post_education = 1 - u2_after_education - U1
 

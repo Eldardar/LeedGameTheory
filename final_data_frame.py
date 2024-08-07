@@ -179,7 +179,8 @@ def genereate_final_data_frame(land_cost_averages):
               total_constructor_profit += apartment_type_h2
               type_2_total_constructed += type_2_constructor_offer_amount
               apartments_type2_totals[apartment_type]["constructed"] += type_2_constructor_offer_amount
-              subsidy_left -= type_2_constructor_offer_amount * subsidy_level
+              if subsidy_left > 0:
+                subsidy_left -= type_2_constructor_offer_amount * subsidy_level
             else:
               total_constructor_profit += apartment_type_h1
 

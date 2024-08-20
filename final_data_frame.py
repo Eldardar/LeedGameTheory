@@ -1,7 +1,7 @@
 import pandas as pd
 import math
 
-from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT_1, PROFIT_EXTRA_CHARGE_2, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2
+from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT_1, PROFIT_EXTRA_CHARGE_2, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2, U3
 from utils import to_percentage_string
 
 FIELDS = ["Iteration",
@@ -84,8 +84,8 @@ def genereate_final_data_frame(land_cost_averages):
         education_cost = education_investment_level * EDUCATION_LEVEL_COST
         # remainder_cost
         subsidy_cost = max(0, E - education_cost)
-        # TODO: Einav is right - type 1 apartments can get susbsidy
-        # subsidy_level = subsidy_cost // M
+        # The government take the rest of the fundings and "split" it between U3 population
+        subsidy_level = subsidy_cost // (M * U3)
 
       # Education calculations
       education_affect = 0.15 / (1 + (math.e ** (-0.5 * (education_investment_level - 7.5))))

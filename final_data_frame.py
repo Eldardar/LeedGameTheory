@@ -1,32 +1,46 @@
 import pandas as pd
 import math
 
-from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, E, EDUCATION_LEVELS_COUNT, EDUCATION_LEVEL_COST, EI, GOVERNMENT_ACTIONS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT_1, PROFIT_EXTRA_CHARGE_2, SI, SUBSIDY_LEVELS, DEMAND_AREAS, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2, U3
+from constants import APARTMENTS_DETAILS, C1, C2, COMPETITIVE_FACTOR, CONSTRUCTOR_MOTIVATION_RATIO, CONTRACTORS_AMOUNT, DEMAND_AREAS_EDUCATIONAL_EFFECTS, E, EDUCATION_BUDGET_LEVELS, EDUCATION_LEVEL_COST_LEVELS, M, MAX_CONSTRUCTOR_APARTMENTS, MIN_PRICE_DIFF, OPERATIONAL_PROFIT_1, PROFIT_EXTRA_CHARGE_2, SI, DEMAND_AREAS, SUBSIDY_LIMIT_LEVEL, TAX_PERCENTAGE, TAX_THRESHOLD, U1, U2, U3
 from utils import to_percentage_string
+
+def find_education_cost_and_factor(education_budget):
+  for education_cost in EDUCATION_LEVEL_COST_LEVELS:
+    if education_cost <= education_budget:
+      return education_cost, EDUCATION_LEVEL_COST_LEVELS[education_cost]
+  
+  return 0, 0
 
 FIELDS = ["Iteration",
           "B Type",
           "Constructor",
+          "Education Budget",
+          "Subdsidy Budget",
+          "Subsidy Level",
+          "Education Spare Budget",
+          "Subsidy Spare Budget",
           "Land Cost",
           "CC1",
           "CC2",
           "Net OP 1",
           "A3 P1",
           "A3 P2",
+          "A3 Subsidy Level",
           "A4 P1",
           "A4 P2",
+          "A4 Subsidy Level",
           "A5 P1",
           "A5 P2",
+          "A5 Subsidy Level",
           "A6 P1",
           "A6 P2",
-          "Primary Action",
-          "Subsidy Cost",
+          "A6 Subsidy Level",
           "Education Cost",
-          "E",
+          "Education affect",
           "EI",
           "U2-After-Education",
           "U3-After-Education",
-          "Subsidy Level",
+          "Subsidy Level Cap",
           "Subsidy Left",
           "A3 Constructor Amount",
           "Green A3 Demand",
@@ -53,45 +67,38 @@ FIELDS = ["Iteration",
           "Total Green Apartments",
           "Constructor Profit"]
 
-# TODO1: Solve number of rooms problem 
-# TODO2: Make the constructor build the scenario which makes him the highest profit
 def genereate_final_data_frame(land_cost_averages):
   final_data_frame = pd.DataFrame(columns=FIELDS)
   iteration_number = 0
   last_residual_m2_subsidy = 0
 
-  for primary_action in list(GOVERNMENT_ACTIONS.keys()):
-    for action_level_index in range(GOVERNMENT_ACTIONS[primary_action]):
-      if primary_action == "Subsidy":
-        subsidy_level = SUBSIDY_LEVELS[action_level_index]
-        # TODO: Einav is right - can be more complicated
-        subsidy_cost = min(subsidy_level * M, E)
-        # remainder_cost
-        education_cost = max(0, E - subsidy_cost)
-        education_investment_level = education_cost // EDUCATION_LEVEL_COST
-      elif primary_action == "Education":
-        education_investment_level = action_level_index
-        education_cost = education_investment_level * EDUCATION_LEVEL_COST
-        # remainder_cost
-        subsidy_cost = max(0, E - education_cost)
-        # The government take the rest of the fundings and "split" it between U3 population
-        subsidy_level = subsidy_cost // (M * U3)
+  for education_budget_level in EDUCATION_BUDGET_LEVELS:
+    education_budget = education_budget_level * E
+    subsidy_budget = E * (1 - education_budget_level)
 
-      # Education calculations
-      education_affect = 0.15 / (1 + (math.e ** (-0.5 * (education_investment_level - 7.5))))
+    # Education calculations
+    # Find the highest level of education that the budget covers
+    education_cost, education_factor_level = find_education_cost_and_factor(education_budget)
+    
+    # Calculate spare budget from education
+    education_spare_budget = education_budget - education_cost
+
+    for area in DEMAND_AREAS:
+      iteration_number += 1
+      
+      # Education affect
+      education_affect = education_factor_level * DEMAND_AREAS_EDUCATIONAL_EFFECTS[area]
       u2_after_education = U2 + education_affect
       u3_post_education = 1 - u2_after_education - U1
 
-      for area in DEMAND_AREAS:
-      # for area in [DEMAND_AREAS[0]]:
-        iteration_number += 1
-        subsidy_left = subsidy_cost
+      # TODO1: Need to enter subsidy steps here (make more iterations)
+      for subsidy_level in SUBSIDY_LIMIT_LEVEL[area]:
+        # subsidy_level = SUBSIDY_LIMIT_LEVEL[area]
+        subsidy_left = subsidy_budget
         type_2_total_constructed = 0
         apartments_type2_totals = {}
 
         for constructor_index in range(CONTRACTORS_AMOUNT):
-          # total_summary = {}
-
           # Cost calculations
           land_cost = land_cost_averages[area]
           net_operational_profit_1 = OPERATIONAL_PROFIT_1 - (constructor_index * COMPETITIVE_FACTOR)
@@ -116,6 +123,7 @@ def genereate_final_data_frame(land_cost_averages):
             price_without_tax_1 = aparment_cost_1 * (net_operational_profit_1 + 1)
             price_with_tax_1 = (price_without_tax_1 - TAX_THRESHOLD) * TAX_PERCENTAGE + price_without_tax_1 \
               if price_without_tax_1 > TAX_THRESHOLD else price_without_tax_1
+            # Constructor profit for type 2 apartments is 6%
             # price_without_tax_2 = aparment_cost_2 * (net_operational_profit_2 + 1)
             price_without_tax_2 = price_with_tax_1 * PROFIT_EXTRA_CHARGE_2
             price_with_tax_2 = (price_without_tax_2 - TAX_THRESHOLD) * TAX_PERCENTAGE + price_without_tax_2 \
@@ -125,13 +133,18 @@ def genereate_final_data_frame(land_cost_averages):
             apartment_2_profit = round(price_without_tax_2 - aparment_cost_2)
 
             # Subsidy calculations
-            subsidized_price_relative_diff_2 = (price_with_tax_2 - price_with_tax_1 - subsidy_level) / price_with_tax_2
+            # Subsidy won't cover more than the gap between type 1 and type 2 apartments
+            single_subsidy_cost = min(subsidy_level, price_with_tax_2 - price_with_tax_1)
+            subsidized_price_relative_diff_2 = (price_with_tax_2 - price_with_tax_1 - single_subsidy_cost) / price_with_tax_2
             # If the subsidy effect is not significant, the part of "green" demand will be set by the education effects.
             # Otherwise, we'll add to the demand the affected part.
             if subsidized_price_relative_diff_2 <= MIN_PRICE_DIFF and subsidy_left > 0:
-              u2_after_subsidy += SI * u3_post_education * (amount / MAX_CONSTRUCTOR_APARTMENTS)
-              area_type_2_apartments_demand_percentage = u2_after_education + SI * u3_post_education * (amount / MAX_CONSTRUCTOR_APARTMENTS)
-              
+              subsidy_costs_for_highly_drived_demand = u2_after_education * amount * single_subsidy_cost 
+              subsidy_left_for_subsidy_effects = subsidy_left - subsidy_costs_for_highly_drived_demand
+              type_2_apartments_left_for_subsidy_effects = (SI * u3_post_education * amount) // subsidy_left_for_subsidy_effects
+
+              u2_after_subsidy += type_2_apartments_left_for_subsidy_effects / MAX_CONSTRUCTOR_APARTMENTS
+              area_type_2_apartments_demand_percentage = u2_after_subsidy
             else:
               area_type_2_apartments_demand_percentage = u2_after_education
               
@@ -162,13 +175,14 @@ def genereate_final_data_frame(land_cost_averages):
               type_2_total_constructed += type_2_constructor_offer_amount
               apartments_type2_totals[apartment_type]["constructed"] += type_2_constructor_offer_amount
               if subsidy_left > 0:
-                subsidy_left -= type_2_constructor_offer_amount * subsidy_level
+                subsidy_left -= type_2_constructor_offer_amount * single_subsidy_cost
             else:
               total_constructor_profit += apartment_type_h1
 
             # total_summary[apartment_type] = summary
             apartments_type2_totals[apartment_type]["P1"] = round(price_with_tax_1)
             apartments_type2_totals[apartment_type]["P2"] = round(price_with_tax_2)
+            apartments_type2_totals[apartment_type]["subsidy_level"] = round(single_subsidy_cost)
           
           m2_after_subsidy = round(u2_after_subsidy * M) if constructor_index == 0 else last_residual_m2_subsidy
           quota_m2_subsidy = min(m2_after_subsidy, MAX_CONSTRUCTOR_APARTMENTS)
@@ -180,26 +194,32 @@ def genereate_final_data_frame(land_cost_averages):
             "Iteration": iteration_number,
             "B Type": area,
             "Constructor": constructor_index + 1,
+            "Education Budget": education_budget,
+            "Subdsidy Budget": subsidy_budget,
+            "Subsidy Level": subsidy_level,
+            "Education Spare Budget": education_spare_budget,
+            "Subsidy Spare Budget": subsidy_left,
             "Land Cost": land_cost,
             "CC1": round(total_construction_cost_1),
             "CC2": round(total_construction_cost_2),
             "Net OP 1": to_percentage_string(net_operational_profit_1),
             "A3 P1": apartments_type2_totals["A3"]["P1"],
             "A3 P2": apartments_type2_totals["A3"]["P2"],
+            "A3 Subsidy Level": apartments_type2_totals["A3"]["subsidy_level"],
             "A4 P1": apartments_type2_totals["A4"]["P1"],
             "A4 P2": apartments_type2_totals["A4"]["P2"],
+            "A4 Subsidy Level": apartments_type2_totals["A4"]["subsidy_level"],
             "A5 P1": apartments_type2_totals["A5"]["P1"],
             "A5 P2": apartments_type2_totals["A5"]["P2"],
+            "A5 Subsidy Level": apartments_type2_totals["A5"]["subsidy_level"],
             "A6 P1": apartments_type2_totals["A6"]["P1"],
             "A6 P2": apartments_type2_totals["A6"]["P2"],
-            "Primary Action": primary_action,
-            "Subsidy Cost": subsidy_cost,
+            "A6 Subsidy Level": apartments_type2_totals["A6"]["subsidy_level"],
             "Education Cost": education_cost,
-            "E": education_investment_level,
-            "EI": 0 if education_investment_level == 0 else EI,
+            "Education affect": education_affect,
             "U2-After-Education": to_percentage_string(u2_after_education),
             "U3-After-Education": to_percentage_string(u3_post_education),
-            "Subsidy Level": subsidy_level,
+            "Subsidy Level Cap": subsidy_level,
             "Subsidy Left": subsidy_left,
             "A3 Constructor Amount": APARTMENTS_DETAILS["A3"]["amount_per_constructor"],
             "Green A3 Demand": apartments_type2_totals["A3"]["demand"],

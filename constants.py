@@ -69,20 +69,45 @@ TAX_PERCENTAGE = 3.5 / 100
 ######################
 # Subsidy properties #
 ######################
-SUBSIDY_LEVELS = [0, 50_000, 100_000, 150_000, 200_000]
 # Subsidiary Influence on U2 parameter (%)
 SI = 10 / 100
 # Minimum Price Difference for Effect
 MIN_PRICE_DIFF = 1.5 / 100
+# Subsidy limit level
+SUBSIDY_LIMIT_LEVEL = {
+  "B1": [50_000, 100_000, 150_000],
+  "B2": [50_000, 100_000, 150_000],
+  "B3": [50_000, 100_000],
+  "B4": [50_000, 100_000],
+  "B5": [50_000],
+  "B6": [50_000],
+  "B7": [50_000],
+}
+SUBSIDY_LEVEL_STEP = 50_000
 
 ########################
 # Education properties #
 ########################
-EDUCATION_LEVEL_COST = 1_000_000
-# Goverment's investment in education (millions NIS)
-EDUCATION_LEVELS_COUNT = 16
-# Education impact factor (%)
-EI = 0.005 / 100
+# Education budget out of the total budget (%)
+EDUCATION_BUDGET_LEVELS = [0/100, 25/100, 50/100, 75/100, 100/100]
+# IMPORTANT - sort it from highest to lowest level
+EDUCATION_LEVEL_COST_LEVELS = {
+  15_000_000: 0.0977,
+  11_500_000: 0.0881,
+  8_000_000: 0.0562,
+  4_500_000: 0.0182,
+  1_000_000: 0.0037,
+}
+# Demand areas and their educational effects
+DEMAND_AREAS_EDUCATIONAL_EFFECTS = {
+  "B1": 100 / 100,
+  "B2": 90 / 100,
+  "B3": 80 / 100,
+  "B4": 70 / 100,
+  "B5": 60 / 100,
+  "B6": 50 / 100,
+  "B7": 50 / 100,
+}
 
 ######################
 # General properties #
@@ -90,7 +115,3 @@ EI = 0.005 / 100
 # Total government investment in marketing & education for green
 # construction (NIS)
 E = 15_000_000
-GOVERNMENT_ACTIONS = {
-  "Subsidy": len(SUBSIDY_LEVELS),
-  "Education": EDUCATION_LEVELS_COUNT,
-}

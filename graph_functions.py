@@ -30,6 +30,20 @@ aFrame")
     # Creating a slight vertical offset for overlapping lines
     offsets = np.linspace(0, 0.5, len(y_fields))
 
+    for i, y_field in enumerate(y_fields):
+           plt.plot(df[x_field], df[y_field] + offsets[i], label=y_field, marker='o')
+
+    plt.title(title)
+    plt.xlabel(x_field)
+    plt.ylabel('Values')
+    plt.legend()
+    plt.grid(True)
+
+    # Adjust X-axis formatting to integer with ₪ sign
+    plt.gca().xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{int(x)} ₪"))
+
+    plt.show()
+
 
 def create_3d_scatter_plot(df: pd.DataFrame, field_x1: str, field_x2: str, field_y: str):
     """

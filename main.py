@@ -7,8 +7,7 @@ from final_data_frame import genereate_final_data_frame
 
 
 def main():
-    input_data_frame = pd.read_csv(
-        r'Leed game theory calculations - Lands Value database.csv')
+    input_data_frame = pd.read_csv(r'2808Leed game theory calculations.csv')
 
     land_cost_averages = {}
     for area in DEMAND_AREAS:
